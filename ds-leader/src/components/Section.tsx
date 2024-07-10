@@ -1,12 +1,22 @@
-import { ReactElement, useState } from "react";
+import { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import Question from "./Question";
-import { Card } from "@mui/material";
+import { Card, Stack, Button, Typography } from "@mui/material";
 
 interface Props {
   questions: string[];
+  setAnswers: Dispatch<SetStateAction<number[]>>;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
+  calculate: () => void;
 }
 
-export default function Section({ questions }: Props): ReactElement {
+export default function Section({
+  questions,
+  setAnswers,
+  page,
+  setPage,
+  calculate,
+}: Props): ReactElement {
   const [q1, setQ1] = useState(3);
   const [q2, setQ2] = useState(3);
   const [q3, setQ3] = useState(3);
@@ -41,17 +51,46 @@ export default function Section({ questions }: Props): ReactElement {
     },
   ];
 
+  function handleNextPage(): void {
+    if (page < 12) {
+      setAnswers([q1, q2, q3, q4, q5]);
+      setPage((page) => page + 1);
+    } else {
+      setAnswers([q1, q2, q3, q4, q5]);
+      calculate();
+    }
+  }
+
+  function handlePreviousPage(): void {
+    if (page > 1) {
+      setPage((page) => page - 1);
+    }
+  }
+
   return (
-    <Card
-      sx={{
-        backgroundColor: "#9ACEEB60",
-        py: 4,
-        px: 12,
-      }}
-    >
-      {questionList.map((question, index) => (
-        <Question key={index} {...question} />
-      ))}
-    </Card>
+    <Stack gap={2}>
+      <Typography>{page}</Typography>
+      <Card
+        sx={{
+          backgroundColor: "#9ACEEB60",
+          py: 4,
+          px: 12,
+          minHeight: "700px",
+        }}
+      >
+        {questionList.map((question, index) => (
+          <Question key={index} {...question} />
+        ))}
+      </Card>
+      <Stack direction="row" gap={2} sx={{ width: "100%" }}>
+        <Button variant="outlined" onClick={handlePreviousPage}>
+          Previous
+        </Button>
+
+        <Button variant="contained" fullWidth onClick={handleNextPage}>
+          {page === 12 ? "Submit" : "Next"}
+        </Button>
+      </Stack>
+    </Stack>
   );
 }

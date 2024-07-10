@@ -11,7 +11,7 @@ export const set2 = [
   "I am highly regimented in my daily personal routines such as exercise schedule or spiritual disciplines",
   "It really bothers me to think about my board or leadership team meeting without me being present",
   "I am obsessed with knowing how others feel about my performance",
-  "I grew up in a struct, legalistic religious environment that held its members to an unrealistic standard of behavior and discouraged open, honest communication about personal problems and struggles",
+  "I grew up in a strict, legalistic religious environment that held its members to an unrealistic standard of behavior and discouraged open, honest communication about personal problems and struggles",
 ];
 
 export const set3 = [
