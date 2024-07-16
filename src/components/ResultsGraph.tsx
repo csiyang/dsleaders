@@ -31,8 +31,6 @@ export default function ResultsGraph({ results }: Props): ReactElement {
     };
   });
 
-  console.log("force build");
-
   return (
     <Stack justifyContent="center" alignItems="center">
       <>
