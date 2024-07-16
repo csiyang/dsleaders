@@ -2,28 +2,28 @@ import { ReactElement } from "react";
 import { Typography, Stack, Slider } from "@mui/material";
 import SentimentSatisfiedAltIcon from "@mui/icons-material/SentimentSatisfiedAlt";
 import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
-
-interface Props {
-  title: string;
-  value: number;
-  setValue: (value: number) => void;
-}
+import { QuestionType, useQuestions } from "../libs/QuestionsProvider";
 
 export default function Question({
-  title,
-  value,
-  setValue,
-}: Props): ReactElement {
+  id,
+  answer,
+  question,
+}: QuestionType): ReactElement {
+  const { dispatch } = useQuestions();
   function handleChange(event: Event, value: number | number[]) {
-    setValue(value as number);
+    dispatch({
+      type: "SetQuestionAction",
+      id: id,
+      answer: value as number,
+    });
   }
   return (
     <>
-      <Typography gutterBottom>{title}</Typography>
+      <Typography gutterBottom>{question}</Typography>
       <Stack direction="row" sx={{ pb: 6, ":last-of-type": { pb: 0 } }}>
         <SentimentVeryDissatisfiedIcon sx={{ color: "darkred" }} />
         <Slider
-          value={value}
+          value={answer}
           onChange={handleChange}
           shiftStep={1}
           min={1}
