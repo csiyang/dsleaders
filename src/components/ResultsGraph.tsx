@@ -34,7 +34,7 @@ export default function ResultsGraph({ results }: Props): ReactElement {
   return (
     <Stack justifyContent="center" alignItems="center">
       <>
-        <Typography>You are a</Typography>
+        <Typography>You are a test</Typography>
         <Typography variant="h4">{startCase(significantCategory)}</Typography>
         <Typography>leader</Typography>
       </>
