@@ -1,10 +1,12 @@
 import { Category } from "./helpers";
 import { QuestionType } from "./QuestionsProvider";
 
-export default function calculateResults(questions: QuestionType[]): {
+export interface Result {
   category: Category;
   result: number;
-}[] {
+}
+
+export function calculateResults(questions: QuestionType[]): Result[] {
   function getCategoryResult(category: Category) {
     return (
       questions
