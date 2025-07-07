@@ -15,21 +15,25 @@ interface Props {
 }
 
 export default function ResultsGraph({ results }: Props): ReactElement {
-  let significantAnswer = 0;
-  let significantCategory = "";
+  // Find the maximum score
+  const maxScore = Math.max(...results.map((r) => r.result));
 
-  const data = results.map(({ result, category }) => {
-    if (result > significantAnswer) {
-      significantAnswer = result;
-      significantCategory = category;
-    }
+  // Get all categories with the maximum score
+  const significantCategories = results
+    .filter((r) => r.result === maxScore)
+    .map((r) => r.category);
 
-    return {
-      category: startCase(category),
-      result,
-      fullMark: 12,
-    };
-  });
+  // Primary category is the first one with max score
+  const primaryCategory = significantCategories[0];
+
+  // Tied categories are the rest (if any)
+  const tiedCategories = significantCategories.slice(1);
+
+  const data = results.map(({ result, category }) => ({
+    category: startCase(category),
+    result,
+    fullMark: 12,
+  }));
 
   return (
     <Stack justifyContent="center" alignItems="center" spacing={3}>
@@ -65,7 +69,7 @@ export default function ResultsGraph({ results }: Props): ReactElement {
             mb: 1,
           }}
         >
-          {startCase(significantCategory)}
+          {startCase(primaryCategory)}
         </Typography>
         <Typography
           variant="h6"
@@ -76,6 +80,19 @@ export default function ResultsGraph({ results }: Props): ReactElement {
         >
           leader!
         </Typography>
+        {tiedCategories.length > 0 && (
+          <Typography
+            variant="body1"
+            sx={{
+              color: "#6a4c93",
+              fontWeight: 500,
+              mt: 2,
+              fontStyle: "italic",
+            }}
+          >
+            Tied with: {tiedCategories.map((cat) => startCase(cat)).join(", ")}
+          </Typography>
+        )}
       </Box>
 
       <Box
