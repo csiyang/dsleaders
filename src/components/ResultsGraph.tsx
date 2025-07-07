@@ -15,8 +15,11 @@ import {
   Select,
   MenuItem,
   FormControl,
+  IconButton,
 } from "@mui/material";
+import { Download } from "@mui/icons-material";
 import { startCase } from "lodash";
+import jsPDF from "jspdf";
 
 interface Props {
   results: Result[];
@@ -36,6 +39,169 @@ export default function ResultsGraph({ results }: Props): ReactElement {
       mobileContentRef.current.scrollTop = 0;
     }
   }, [selectedTab]);
+
+  // PDF generation function
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    let yPosition = 30;
+
+    // Helper function to add text with word wrapping
+    const addText = (
+      text: string,
+      fontSize: number,
+      isBold = false,
+      isCenter = false
+    ) => {
+      doc.setFontSize(fontSize);
+      doc.setFont("helvetica", isBold ? "bold" : "normal");
+
+      const lines = doc.splitTextToSize(text, pageWidth - 2 * margin);
+
+      lines.forEach((line: string) => {
+        if (yPosition > 280) {
+          doc.addPage();
+          yPosition = 30;
+        }
+
+        const xPosition = isCenter ? pageWidth / 2 : margin;
+        doc.text(line, xPosition, yPosition, {
+          align: isCenter ? "center" : "left",
+        });
+        yPosition += fontSize * 0.5;
+      });
+
+      yPosition += 5;
+    };
+
+    // Title
+    addText("The Dark Side of Leadership - Assessment Results", 18, true, true);
+    yPosition += 10;
+
+    // Primary Result
+    addText(`Primary Leadership Type: ${startCase(primaryCategory)}`, 14, true);
+    yPosition += 5;
+
+    // Tied categories if any
+    if (tiedCategories.length > 0) {
+      addText(
+        `Tied with: ${tiedCategories.map((cat) => startCase(cat)).join(", ")}`,
+        12
+      );
+      yPosition += 5;
+    }
+
+    // All results in order
+    const sortedResults = [...results].sort((a, b) => b.result - a.result);
+    addText("Complete Results (Highest to Lowest):", 14, true);
+
+    sortedResults.forEach((result) => {
+      addText(`${startCase(result.category)}: ${result.result}/12`, 12);
+    });
+
+    yPosition += 15;
+
+    // Add separator line
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 15;
+
+    // Category descriptions header
+    addText("Leadership Category Descriptions", 16, true, true);
+    yPosition += 10;
+
+    // Category descriptions
+    const categoryData = {
+      Compulsive: {
+        title: "THE COMPULSIVE LEADER",
+        subtitle: "Control",
+        points: [
+          "Control",
+          "Perfectionism",
+          "Routines, order, systems",
+          "Status conscious",
+          "Look for reassurance and approval of authority figures",
+          "Anxious when unsure of performance or standing",
+          "Pursuit of excellence in ministry that crosses line to obsessive perfectionism",
+          "Identity closely tied to performance",
+        ],
+      },
+      Narcissistic: {
+        title: "THE NARCISSISTIC LEADER",
+        subtitle: "Axis of Self",
+        points: [
+          "The world revolves around the axis of self",
+          "Need for constant attention",
+          "Overestimate own achievements",
+          "Overinflated sense of importance to the organisation",
+          "Struggles to recognise contributions of others",
+          "Use others to advance own goals",
+          "Internally uncertain of themselves and dissatisfied with accomplishments",
+          "Driven to take on ambitious, grand and costly projects",
+        ],
+      },
+      Paranoid: {
+        title: "THE PARANOID LEADER",
+        subtitle: "Fear",
+        points: [
+          "Afraid of anything new or anyone",
+          "Suspicious",
+          "Guarded",
+          "Hypersensitive to people's actions and comments",
+          "Overreacts to even mildest forms of criticism",
+          "Insecure in own abilities",
+          "Jealous of other gifted people",
+          "Difficulty developing and maintaining close relationships",
+          "Creates rigid structures, systems, and reporting to control and limit autonomy of others",
+        ],
+      },
+      Codependent: {
+        title: "THE CODEPENDENT LEADER",
+        subtitle: "Peacemaker",
+        points: [
+          "Seeks to keep the peace; peacemaker",
+          "Develops coping behaviours for covering up",
+          "Tendency to react rather than initiate action",
+          "Takes personal responsibility for the actions and emotions of others, often blaming themselves",
+          "Worry about the feelings of others",
+          "Unhealthy drive to ease the pain of others",
+          "Difficulty coping with the behaviours and expectations of those around them",
+          "Hesitant to speak truth for fear of hurting a person's feelings",
+        ],
+      },
+      "Passive Aggressive": {
+        title: "THE PASSIVE-AGGRESSIVE LEADER",
+        subtitle: "Resist",
+        points: [
+          "Resist demands to adequately perform tasks",
+          "Procrastination, dawdling, stubbornness, forgetfulness, intentional inefficiency ... as means of controlling their environment or those around them",
+          "Fear of failure ... and fear of success",
+          "Short outbursts expressing intense emotions",
+          "Pessimistic outlook",
+          "Quick to complain",
+          "Perform tasks but with little or no enthusiasm",
+          "Appear to be happy but harbour anger or bitterness",
+          "Impatience, irritability, fidgeting when things aren't going their way",
+        ],
+      },
+    };
+
+    // Add each category description
+    Object.values(categoryData).forEach((category) => {
+      addText(category.title, 14, true);
+      addText(`Key Theme: ${category.subtitle}`, 12, true);
+
+      category.points.forEach((point) => {
+        addText(`• ${point}`, 10);
+      });
+
+      yPosition += 10;
+    });
+
+    // Save the PDF
+    doc.save("leadership-assessment-results.pdf");
+  };
 
   // Find the maximum score
   const maxScore = Math.max(...results.map((r) => r.result));
@@ -121,6 +287,31 @@ export default function ResultsGraph({ results }: Props): ReactElement {
                 {tiedCategories.map((cat) => startCase(cat)).join(", ")}
               </Typography>
             )}
+
+            {/* Download Button */}
+            <Button
+              onClick={generatePDF}
+              variant="contained"
+              startIcon={<Download />}
+              sx={{
+                mt: 3,
+                borderRadius: "12px",
+                px: 3,
+                py: 1.5,
+                fontWeight: 600,
+                textTransform: "none",
+                background: "linear-gradient(45deg, #764ba2, #c471ed)",
+                color: "white",
+                border: "none",
+                "&:hover": {
+                  background: "linear-gradient(45deg, #c471ed, #764ba2)",
+                  transform: "translateY(-2px)",
+                },
+                transition: "all 0.3s ease",
+              }}
+            >
+              Download Complete Results
+            </Button>
           </Box>
 
           <Box
