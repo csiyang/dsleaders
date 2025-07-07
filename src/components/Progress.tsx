@@ -35,9 +35,10 @@ export default function Progress(): ReactElement {
             borderRadius: 6,
             backgroundColor: "rgba(255,255,255,0.3)",
             "& .MuiLinearProgress-bar": {
-              background: "linear-gradient(45deg, #c471ed, #667eea)",
+              background:
+                "linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,200,180,0.8) 25%, rgba(255,150,130,0.85) 50%, #ff6b6b 75%, #ee5a24 100%)",
               borderRadius: 6,
-              boxShadow: "0 2px 8px rgba(196, 113, 237, 0.4)",
+              boxShadow: "0 2px 8px rgba(255, 107, 107, 0.4)",
             },
           }}
         />

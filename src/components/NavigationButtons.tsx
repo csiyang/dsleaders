@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { Stack, Button } from "@mui/material";
 import { useQuestions } from "../libs/QuestionsProvider";
 import SubmitButton from "./SubmitButton";
@@ -8,6 +8,9 @@ export default function NavigationButtons(): ReactElement {
     state: { page },
     dispatch,
   } = useQuestions();
+
+  const [nextMousePosition, setNextMousePosition] = useState({ x: 0, y: 0 });
+  const [nextIsHovered, setNextIsHovered] = useState(false);
 
   function handlePreviousPage() {
     if (page > 1) {
@@ -25,6 +28,22 @@ export default function NavigationButtons(): ReactElement {
       });
     }
   }
+
+  const handleNextMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setNextMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleNextMouseEnter = () => {
+    setNextIsHovered(true);
+  };
+
+  const handleNextMouseLeave = () => {
+    setNextIsHovered(false);
+  };
 
   const buttonStyles = {
     borderRadius: "16px",
@@ -85,14 +104,21 @@ export default function NavigationButtons(): ReactElement {
           variant="contained"
           fullWidth
           onClick={handleNextPage}
+          onMouseMove={handleNextMouseMove}
+          onMouseEnter={handleNextMouseEnter}
+          onMouseLeave={handleNextMouseLeave}
           sx={{
             ...buttonStyles,
-            background: "linear-gradient(45deg, #c471ed, #764ba2)",
+            position: "relative",
+            overflow: "hidden",
+            background: nextIsHovered
+              ? `radial-gradient(circle 150px at ${nextMousePosition.x}px ${nextMousePosition.y}px, #8b5cf6, #7c3aed, #6d28d9, #5b21b6)`
+              : "linear-gradient(45deg, #6d28d9, #5b21b6)",
             color: "white",
             border: "none",
+            transition: "background 0.3s ease",
             "&:hover": {
               ...buttonStyles["&:hover"],
-              background: "linear-gradient(45deg, #764ba2, #c471ed)",
             },
           }}
         >

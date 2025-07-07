@@ -7,6 +7,8 @@ import ResultsGraph from "./ResultsGraph";
 export default function SubmitButton(): ReactElement {
   const [open, setOpen] = useState(false);
   const [results, setResults] = useState<Result[]>([]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
   const {
     state: { questions },
   } = useQuestions();
@@ -23,6 +25,22 @@ export default function SubmitButton(): ReactElement {
     handleOpen();
     setResults(calculateResults(questions));
   }
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   const buttonStyles = {
     borderRadius: "16px",
@@ -45,18 +63,25 @@ export default function SubmitButton(): ReactElement {
         variant="contained"
         fullWidth
         onClick={handleSubmit}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         sx={{
           ...buttonStyles,
-          background: "linear-gradient(45deg, #ff6b6b, #ee5a24, #ff9ff3)",
+          position: "relative",
+          overflow: "hidden",
+          background: isHovered
+            ? `radial-gradient(circle 150px at ${mousePosition.x}px ${mousePosition.y}px, #ff8a80, #ff6b6b, #ee5a24, #d84315)`
+            : "linear-gradient(45deg, #ee5a24, #d84315)",
           color: "white",
           border: "none",
+          transition: "background 0.3s ease",
           "&:hover": {
             ...buttonStyles["&:hover"],
-            background: "linear-gradient(45deg, #ee5a24, #ff6b6b, #ff9ff3)",
           },
         }}
       >
-        🎯 Submit & See Results!
+        Submit & See Results!
       </Button>
       <Dialog
         open={open}
@@ -83,7 +108,7 @@ export default function SubmitButton(): ReactElement {
             pb: 1,
           }}
         >
-          🎮 Your Leadership Results
+          Your Leadership Results
         </DialogTitle>
         <DialogContent sx={{ pt: 2 }}>
           <ResultsGraph results={results} />

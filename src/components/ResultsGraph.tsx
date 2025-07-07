@@ -51,7 +51,7 @@ export default function ResultsGraph({ results }: Props): ReactElement {
             mb: 1,
           }}
         >
-          🎲 You are a
+          You are a
         </Typography>
         <Typography
           variant="h3"
@@ -74,7 +74,7 @@ export default function ResultsGraph({ results }: Props): ReactElement {
             fontWeight: 500,
           }}
         >
-          leader! 🎮
+          leader!
         </Typography>
       </Box>
 
