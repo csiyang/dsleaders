@@ -32,23 +32,94 @@ export default function ResultsGraph({ results }: Props): ReactElement {
   });
 
   return (
-    <Stack justifyContent="center" alignItems="center">
-      <>
-        <Typography>You are a test</Typography>
-        <Typography variant="h4">{startCase(significantCategory)}</Typography>
-        <Typography>leader</Typography>
-      </>
-      <Box sx={{ height: "400px", width: "540px" }}>
+    <Stack justifyContent="center" alignItems="center" spacing={3}>
+      <Box
+        sx={{
+          background:
+            "linear-gradient(135deg, rgba(196, 113, 237, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%)",
+          borderRadius: "16px",
+          padding: 3,
+          textAlign: "center",
+          border: "1px solid rgba(196, 113, 237, 0.2)",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{
+            color: "#4a4a7a",
+            fontWeight: 500,
+            mb: 1,
+          }}
+        >
+          🎲 You are a
+        </Typography>
+        <Typography
+          variant="h3"
+          sx={{
+            color: "#764ba2",
+            fontWeight: 700,
+            background: "linear-gradient(45deg, #c471ed, #764ba2)",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            mb: 1,
+          }}
+        >
+          {startCase(significantCategory)}
+        </Typography>
+        <Typography
+          variant="h6"
+          sx={{
+            color: "#4a4a7a",
+            fontWeight: 500,
+          }}
+        >
+          leader! 🎮
+        </Typography>
+      </Box>
+
+      <Box
+        sx={{
+          height: "400px",
+          width: "100%",
+          maxWidth: "540px",
+          background: "rgba(255,255,255,0.5)",
+          borderRadius: "20px",
+          padding: 2,
+          border: "1px solid rgba(196, 113, 237, 0.2)",
+        }}
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="50%" data={data}>
-            <PolarGrid />
-            <PolarAngleAxis dataKey="category" />
+          <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+            <PolarGrid stroke="rgba(118, 75, 162, 0.3)" strokeWidth={2} />
+            <PolarAngleAxis
+              dataKey="category"
+              tick={{
+                fontSize: 12,
+                fill: "#764ba2",
+                fontWeight: 600,
+              }}
+            />
             <Radar
               dataKey="result"
-              stroke="#8884d8"
-              fill="#8884d8"
-              fillOpacity={0.6}
+              stroke="#c471ed"
+              strokeWidth={3}
+              fill="url(#gradientFill)"
+              fillOpacity={0.4}
+              dot={{ fill: "#764ba2", stroke: "#c471ed", strokeWidth: 2, r: 6 }}
             />
+            <defs>
+              <linearGradient
+                id="gradientFill"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
+                <stop offset="0%" stopColor="#c471ed" stopOpacity={0.6} />
+                <stop offset="100%" stopColor="#764ba2" stopOpacity={0.3} />
+              </linearGradient>
+            </defs>
           </RadarChart>
         </ResponsiveContainer>
       </Box>
