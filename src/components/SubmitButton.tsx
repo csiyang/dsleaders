@@ -110,7 +110,7 @@ export default function SubmitButton(): ReactElement {
         >
           Your Leadership Results
         </DialogTitle>
-        <DialogContent sx={{ pt: 2 }}>
+        <DialogContent sx={{ pt: 2, height: "500px", overflow: "hidden" }}>
           <ResultsGraph results={results} />
         </DialogContent>
       </Dialog>
