@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect, useRef } from "react";
 import Question from "./Question";
 import { Card, Box } from "@mui/material";
 import { useQuestions } from "../libs/QuestionsProvider";
@@ -9,6 +9,14 @@ export default function Section(): ReactElement {
   } = useQuestions();
 
   const pageQuestions = questions.filter((question) => question.set === page);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll to top when page changes
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [page]);
 
   return (
     <Card
@@ -27,6 +35,7 @@ export default function Section(): ReactElement {
       }}
     >
       <Box
+        ref={scrollContainerRef}
         sx={{
           py: 4,
           px: { xs: 3, sm: 4, md: 6 },
